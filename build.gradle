@@ -3,8 +3,8 @@
 buildscript {
     ext.kotlin_version = '1.3.71'
     repositories {
-        google()
         jcenter()
+        google()
         
     }
     dependencies {
@@ -16,10 +16,14 @@ buildscript {
     }
 }
 
+ext {
+    navigationVersion = '1.0.0-rc02'
+}
+
 allprojects {
     repositories {
-        google()
         jcenter()
+        google()
         
     }
 }
