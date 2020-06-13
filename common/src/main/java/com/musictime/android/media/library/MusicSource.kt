@@ -5,6 +5,7 @@ import android.provider.MediaStore
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import androidx.annotation.IntDef
+import com.musictime.android.extensions.*
 
 interface MusicSource : Iterable<MediaMetadataCompat> {
 
@@ -79,7 +80,42 @@ abstract class AbstractMusicSource : MusicSource {
                     song.artist == artist || song.albumArtist == artist
                 }
             }
-            
+            MediaStore.Audio.Albums.ENTRY_CONTENT_TYPE -> {
+                val artist = extras[MediaStore.EXTRA_MEDIA_ARTIST]
+                val album = extras[MediaStore.EXTRA_MEDIA_ALBUM]
+                Log.d(TAG, "Focused album search: album='$album' artist='$artist")
+                filter { song ->
+                    (song.artist == artist || song.albumArtist == artist) && song.album == album
+                }
+            }
+            MediaStore.Audio.Media.ENTRY_CONTENT_TYPE -> {
+                val title = extras[MediaStore.EXTRA_MEDIA_TITLE]
+                val album = extras[MediaStore.EXTRA_MEDIA_ALBUM]
+                val artist = extras[MediaStore.EXTRA_MEDIA_ARTIST]
+                Log.d(TAG, "Focused media search: title='$title' album='$album' artist='$artist")
+                filter { song ->
+                    (song.artist == artist || song.albumArtist == artist) && song.album == album
+                            && song.title == title
+                }
+            }
+            else -> {
+                emptyList()
+            }
+        }
+
+        if (focusSearchResult.isEmpty()) {
+            return if (query.isNotBlank()) {
+                Log.d(TAG, "Unfocused search for '$query'")
+                filter { song ->
+                    song.title.containsCaseInsensitive(query)
+                            || song.genre.containsCaseInsensitive(query)
+                }
+            } else {
+                Log.d(TAG, "Unfocused search without keyword")
+                return shuffled()
+            }
+        } else {
+            return focusSearchResult
         }
     }
 }
