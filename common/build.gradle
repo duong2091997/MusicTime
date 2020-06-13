@@ -29,10 +29,22 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api 'androidx.core:core-ktx:1.3.0'
     api 'androidx.appcompat:appcompat:1.1.0'
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     api "androidx.media:media:$androidx_media_version"
+
+    if (findProject(':exoplayer-library-core') != null) {
+        api project(':exoplayer-library-core')
+        api project(':exoplayer-library-ui')
+        api project(':exoplayer-extension-mediasession')
+    } else {
+        api "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
+        api "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
+        api "com.google.android.exoplayer:extension-mediasession:$exoplayer_version"
+    }
 
 }
