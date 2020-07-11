@@ -4,6 +4,9 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaMetadataCompat
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DataSource
 
 inline val MediaMetadataCompat.id: String?
     get() = getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
@@ -220,5 +223,27 @@ inline var MediaMetadataCompat.Builder.flag: Int
     set(value) {
         putLong(METADATA_KEY_UAMP_FLAGS, value.toLong())
     }
+
+inline val MediaMetadataCompat.fullDescription
+    get() =
+        description.also {
+            it.extras?.putAll(bundle)
+        }
+
+fun MediaMetadataCompat.toMediaSource(dataSourceFactory: DataSource.Factory) =
+    ProgressiveMediaSource.Factory(dataSourceFactory)
+        .setTag(fullDescription)
+        .createMediaSource(mediaUri)
+
+fun List<MediaMetadataCompat>.toMediaSource(
+    dataSourceFactory: DataSource.Factory
+): ConcatenatingMediaSource {
+
+    val concatenatingMediaSource = ConcatenatingMediaSource()
+    forEach {
+        concatenatingMediaSource.addMediaSource(it.toMediaSource(dataSourceFactory))
+    }
+    return concatenatingMediaSource
+}
 
 const val METADATA_KEY_UAMP_FLAGS = "com.musictime.android.media.METADATA_KEY_UAMP_FLAGS"

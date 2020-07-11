@@ -11,6 +11,8 @@ class BrowseTree(context: Context, musicSource: MusicSource) {
     
     val searchableByUnknownCaller = true
     
+    operator fun get(mediaId: String) = mediaIdToChildren[mediaId]
+    
     init {
         val rootList = mediaIdToChildren[UAMP_BROWSABLE_ROOT] ?: mutableListOf()
         
@@ -45,5 +47,6 @@ const val UAMP_EMPTY_ROOT = "@empty@"
 const val UAMP_RECOMMENDED_ROOT = "__RECOMMENDED__"
 const val UAMP_ALBUMS_ROOT = "__ALBUMS__"
 
+const val MEDIA_SEARCH_SUPPORTED = "android.media.browse.SEARCH_SUPPORTED"
 // TODO: Correct this!
 const val RESOURCE_ROOT_URI = "android.resource://com.musictime.android.next/drawable/"
